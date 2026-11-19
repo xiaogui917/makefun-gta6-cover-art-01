@@ -1,5 +1,23 @@
 [
-  { "name": "1-cover.jpg", "query": "?shot=cover&photo=pier&caption=Sunset%20Heist", "w": 1080, "h": 1080 },
-  { "name": "2-editor.jpg", "query": "?shot=editor&photo=boulevard&caption=Boulevard%20Queen", "w": 1280, "h": 720 },
-  { "name": "3-cover.jpg", "query": "?shot=cover&photo=boulevard&caption=Boulevard%20Queen", "w": 1080, "h": 1080 }
+  {
+    "name": "1-cover.jpg",
+    "query": "?shot=cover&preset=sunset&layout=quad-mosaic&size=landscape&title=VICE%20HORIZON&subtitle=WELCOME%20TO%20LEONIDA&photo=pier",
+    "w": 1280,
+    "h": 720,
+    "description": "Exported GTA 6 style poster cover in Vice Sunset color grade with quad mosaic comic panels, 3D extruded lettering, and palm silhouette"
+  },
+  {
+    "name": "2-editor.jpg",
+    "query": "?shot=editor&preset=sunset&layout=quad-mosaic&size=landscape&title=VICE%20HORIZON&subtitle=WELCOME%20TO%20LEONIDA&photo=pier",
+    "w": 1280,
+    "h": 720,
+    "description": "Interactive Vice Poster Studio editor showing photo management, multi-panel layout geometry, color grading, adjustments, and live canvas preview"
+  },
+  {
+    "name": "3-cover.jpg",
+    "query": "?shot=cover&preset=neon&layout=duo-diagonal&size=landscape&title=NEON%20DRIFT&subtitle=PALMETTO%20CITY%20LIGHTS&photo=boulevard",
+    "w": 1280,
+    "h": 720,
+    "description": "Alternate exported cover in Neon Night color grade with duo diagonal action panel split and electric glowing typography"
+  }
 ]
