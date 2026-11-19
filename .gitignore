@@ -1,9 +1,11 @@
-# Ignored directories and artifacts
+# Ignored build outputs, local shot tooling, and environment keys
 out/
 .shot-tools/
 node_modules/
 .env
+*.env
 *.keypair
+*.keypair.json
 *.json.keypair
 id_*.json
 makefun-keypair.json

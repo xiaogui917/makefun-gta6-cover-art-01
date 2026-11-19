@@ -1,51 +1,79 @@
-// Wires the page: pick a photo, type a caption, export the square cover as a PNG. A `?shot=` query sets up a fixed
-// scene for a screenshot instead (./shots.js).
-import { drawCover } from './cover.js';
-import { runShot } from './shots.js';
+// Main application entry point for Vice Poster Studio:
+// GTA 6 style cover art generator web application.
 
-const canvas = document.getElementById('cover');
-const caption = document.getElementById('caption');
-const status = document.getElementById('status');
-let photo = null;
+import { renderCover } from './cover_renderer.js';
+import { setupEditorInterface } from './editor_ui.js';
+import { initializeShotsHarness } from './shots_harness.js';
+import { DEFAULT_STATE, SAMPLE_PHOTOS } from './preset_samples.js';
+import { loadImage } from './photo_loader.js';
 
-function redraw() {
-  drawCover(canvas, photo, caption.value);
+// Application reactive state
+const state = { ...DEFAULT_STATE };
+const photosMap = {
+  primary: null,
+  panel_0: null,
+  panel_1: null,
+  panel_2: null,
+  panel_3: null
+};
+
+// DOM Elements
+const elements = {
+  canvas: document.getElementById('coverCanvas'),
+  photoInput: document.getElementById('photoInput'),
+  sampleButtons: document.querySelectorAll('[data-sample]'),
+  titleInput: document.getElementById('titleInput'),
+  subtitleInput: document.getElementById('subtitleInput'),
+  taglineInput: document.getElementById('taglineInput'),
+  badgeInput: document.getElementById('badgeInput'),
+  layoutButtons: document.querySelectorAll('[data-layout]'),
+  gradeButtons: document.querySelectorAll('[data-grade]'),
+  sizeButtons: document.querySelectorAll('[data-size]'),
+  contrastSlider: document.getElementById('contrastSlider'),
+  saturationSlider: document.getElementById('saturationSlider'),
+  borderSlider: document.getElementById('borderSlider'),
+  halftoneCheck: document.getElementById('halftoneCheck'),
+  presetCaptionButtons: document.querySelectorAll('.caption-preset-btn'),
+  exportButton: document.getElementById('exportButton'),
+  statusText: document.getElementById('statusText')
+};
+
+/** Redraws the cover art onto the canvas. */
+function requestRender() {
+  if (!elements.canvas) return;
+  renderCover(elements.canvas, state, photosMap);
 }
 
-/** Loads an image from a URL, resolving to the image once it can be drawn. */
-export function loadImage(url) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = url;
-  });
+// Bootstrap application
+async function bootstrap() {
+  const query = new URLSearchParams(window.location.search);
+  const isShot = await initializeShotsHarness(query, state, photosMap, requestRender);
+
+  if (!isShot) {
+    // Normal interactive browser session: setup editor and load default sample photos
+    setupEditorInterface(elements, state, photosMap, requestRender);
+
+    try {
+      const [imgPier, imgBlvd] = await Promise.all([
+        loadImage(SAMPLE_PHOTOS[0].path),
+        loadImage(SAMPLE_PHOTOS[1].path)
+      ]);
+      photosMap.primary = imgPier;
+      photosMap.panel_0 = imgPier;
+      photosMap.panel_1 = imgBlvd;
+      photosMap.panel_2 = imgPier;
+      photosMap.panel_3 = imgBlvd;
+    } catch (err) {
+      console.warn('Initial sample photo load notice:', err);
+    }
+
+    requestRender();
+  }
 }
 
-document.getElementById('photo').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  photo = await loadImage(URL.createObjectURL(file));
-  redraw();
-});
-caption.addEventListener('input', redraw);
-document.getElementById('export').addEventListener('click', () => {
-  canvas.toBlob((blob) => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'cover-1080x1080.png';
-    a.click();
-    status.textContent = 'Saved cover-1080x1080.png';
-  }, 'image/png');
-});
-
-const shot = new URLSearchParams(location.search).get('shot');
-if (shot) {
-  runShot(shot, new URLSearchParams(location.search), async (sample, text) => {
-    photo = await loadImage(sample);
-    caption.value = text;
-    redraw();
-  });
+// Start app once DOM is parsed
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
 } else {
-  redraw();
+  bootstrap();
 }

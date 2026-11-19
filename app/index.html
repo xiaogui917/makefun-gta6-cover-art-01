@@ -1,23 +1,143 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
-<link rel="stylesheet" href="./style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vice Poster Studio</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
-  </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
-</main>
-<script type="module" src="./src/main.js"></script>
+  <div class="app-container">
+    <!-- Editor Sidebar -->
+    <aside class="editor-sidebar">
+      <header class="brand-header">
+        <h1>Vice Poster Studio</h1>
+        <p>GTA 6 Style Cover Art Lab</p>
+      </header>
+
+      <div class="controls-scroll">
+        <!-- Photo Selection -->
+        <div class="section-group">
+          <div class="section-title"><span>📷</span> 1. Select Photos</div>
+          <label class="file-upload-label">
+            <span>+ Upload Your Photo</span>
+            <input id="photoInput" type="file" accept="image/*">
+          </label>
+          <div class="button-grid">
+            <button type="button" class="option-btn active" data-sample="pier">Sunset Pier</button>
+            <button type="button" class="option-btn" data-sample="boulevard">Neon Blvd</button>
+          </div>
+        </div>
+
+        <!-- Typography & Captions -->
+        <div class="section-group">
+          <div class="section-title"><span>✍️</span> 2. Poster Typography</div>
+          <div class="input-row">
+            <label class="input-label" for="titleInput">Main Title</label>
+            <input id="titleInput" type="text" maxlength="32" value="VICE HORIZON">
+          </div>
+          <div class="input-row">
+            <label class="input-label" for="subtitleInput">Caption / Subtitle</label>
+            <input id="subtitleInput" type="text" maxlength="48" value="WELCOME TO LEONIDA">
+          </div>
+          <div class="input-row">
+            <label class="input-label" for="taglineInput">Tagline / Stamp</label>
+            <input id="taglineInput" type="text" maxlength="32" value="OCTOBER 2026">
+          </div>
+          <div class="input-row">
+            <label class="input-label" for="badgeInput">Roman Numeral / Badge</label>
+            <input id="badgeInput" type="text" maxlength="8" value="VI">
+          </div>
+        </div>
+
+        <!-- Quick Caption Presets -->
+        <div class="section-group">
+          <div class="section-title"><span>⚡</span> Quick Caption Presets</div>
+          <div class="button-grid">
+            <button type="button" class="option-btn caption-preset-btn">Sunset Heist</button>
+            <button type="button" class="option-btn caption-preset-btn">Neon Drift</button>
+            <button type="button" class="option-btn caption-preset-btn">Tropic Run</button>
+            <button type="button" class="option-btn caption-preset-btn">Coastline VI</button>
+          </div>
+        </div>
+
+        <!-- Multi-panel Layout -->
+        <div class="section-group">
+          <div class="section-title"><span>📐</span> 3. Comic Panel Layout</div>
+          <div class="button-grid">
+            <button type="button" class="option-btn active" data-layout="quad-mosaic">Quad Mosaic</button>
+            <button type="button" class="option-btn" data-layout="classic-triptych">Triptych</button>
+            <button type="button" class="option-btn" data-layout="duo-diagonal">Duo Diagonal</button>
+            <button type="button" class="option-btn" data-layout="hero-spotlight">Single Hero</button>
+          </div>
+        </div>
+
+        <!-- Color Grade & Mood -->
+        <div class="section-group">
+          <div class="section-title"><span>🎨</span> 4. Color Grade</div>
+          <div class="button-grid">
+            <button type="button" class="option-btn active" data-grade="vice-sunset">Vice Sunset</button>
+            <button type="button" class="option-btn" data-grade="neon-night">Neon Night</button>
+            <button type="button" class="option-btn" data-grade="golden-hour">Golden Hour</button>
+            <button type="button" class="option-btn" data-grade="pastel-tropic">Pastel Tropic</button>
+          </div>
+        </div>
+
+        <!-- Canvas Dimensions -->
+        <div class="section-group">
+          <div class="section-title"><span>📏</span> 5. Poster Dimensions</div>
+          <div class="button-grid">
+            <button type="button" class="option-btn active" data-size="landscape">16:9 Banner</button>
+            <button type="button" class="option-btn" data-size="square">1:1 Square</button>
+            <button type="button" class="option-btn" data-size="portrait">4:5 Story</button>
+          </div>
+        </div>
+
+        <!-- Adjustments & Polish -->
+        <div class="section-group">
+          <div class="section-title"><span>⚙️</span> 6. Finishes & Adjustments</div>
+          <div class="input-row">
+            <div class="slider-row">
+              <span class="input-label">Contrast</span>
+              <input id="contrastSlider" type="range" min="0.8" max="1.6" step="0.05" value="1.15">
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="slider-row">
+              <span class="input-label">Saturation</span>
+              <input id="saturationSlider" type="range" min="0.8" max="2.0" step="0.05" value="1.35">
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="slider-row">
+              <span class="input-label">Panel Borders</span>
+              <input id="borderSlider" type="range" min="0" max="24" step="2" value="10">
+            </div>
+          </div>
+          <div class="input-row" style="margin-top: 4px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-dim); cursor: pointer;">
+              <input id="halftoneCheck" type="checkbox" checked style="accent-color: var(--accent-pink);">
+              Vintage Halftone Comic Dots
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <footer class="editor-footer">
+        <button id="exportButton" type="button" class="btn-export">EXPORT PNG POSTER</button>
+        <p id="statusText" class="status-bar" role="status">Ready</p>
+      </footer>
+    </aside>
+
+    <!-- Canvas Preview Stage -->
+    <main class="preview-stage">
+      <div class="canvas-wrapper">
+        <canvas id="coverCanvas" width="1920" height="1080" aria-label="GTA 6 Style Cover Art Canvas"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
